@@ -1,6 +1,5 @@
 streamlit
---find-links https://pytorch.org
-torch==2.5.1+cpu
+torch
 joblib
 scikit-learn
 numpy
