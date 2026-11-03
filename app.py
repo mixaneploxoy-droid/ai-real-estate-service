@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import base64
 
 st.set_page_config(page_title="ИИ Генератор Видео", page_icon="🎬", layout="centered")
 
@@ -31,13 +32,23 @@ if st.button("🚀 Сгенерировать ИИ-Видео"):
             progress_bar.progress(i + 1)
             status_text.text(f"Сборка кадров нейросетью: {i + 1}%")
             
-        # Этот блок срабатывает строго ПОСЛЕ того, как шкала дошла до 100%
         st.success("Видео успешно сгенерировано высокоскоростным ИИ-узлом!")
         
-        # Надежное чтение локального файла video.mp4 из репозитория
+        # Самый надежный метод вывода: кодирование видео в строку Base64
         try:
             with open("video.mp4", "rb") as video_file:
                 video_bytes = video_file.read()
-            st.video(video_bytes, format="video/mp4", muted=True, autoplay=True)
+            
+            # Конвертируем байты видео в текстовую строку
+            base64_video = base64.b64encode(video_bytes).decode("utf-8")
+            video_html = f"""
+                <video width="100%" height="auto" controls autoplay muted playsinline style="border-radius: 10px; background-color: #000;">
+                    <source src="data:video/mp4;base64,{base64_video}" type="video/mp4">
+                    Ваш браузер не поддерживает встроенные видео.
+                </video>
+            """
+            # Выводим чистый HTML плеер
+            st.components.v1.html(video_html, height=450)
+            
         except FileNotFoundError:
             st.error("⚠️ Файл 'video.mp4' не найден на сервере. Пожалуйста, убедитесь, что вы загрузили его в корень репозитория GitHub рядом с app.py!")
