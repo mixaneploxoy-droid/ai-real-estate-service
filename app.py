@@ -37,7 +37,12 @@ if st.button("🚀 Сгенерировать ИИ-Видео"):
 import streamlit.components.v1 as components
 components.html("""
     <video width="100%" height="auto" controls autoplay muted playsinline>
+        import streamlit.components.v1 as components
+components.html("""
+    <video width="100%" height="auto" controls autoplay muted playsinline>
         <source src="video.mp4" type="video/mp4">
+    </video>
+""", height=400)
     </video>
 """, height=400)
         
