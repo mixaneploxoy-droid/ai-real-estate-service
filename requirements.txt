@@ -1,5 +1,13 @@
-streamlit
-torch
-joblib
-scikit-learn
-numpy
+[[source]]
+url = "https://pypi.org"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+streamlit = "*"
+requests = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
