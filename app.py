@@ -35,5 +35,5 @@ if st.button("🚀 Сгенерировать ИИ-Видео"):
 
 st.success("Видео успешно сгенерировано высокоскоростным ИИ-узлом!")
 
-video_url = "https://mixkit.co"
+video_url = "video.mp4"
 st.video(video_url, muted=True, autoplay=True)
