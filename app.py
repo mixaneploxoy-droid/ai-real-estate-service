@@ -31,7 +31,15 @@ if st.button("🚀 Сгенерировать ИИ-Видео"):
             progress_bar.progress(i + 1)
             status_text.text(f"Сборка кадров нейросетью: {i + 1}%")
             
-        st.success("🎯 Видео успешно сгенерировано высокоскоростным ИИ-узлом!")
+        st.success("Видео успешно сгенерировано высокоскоростным ИИ-узлом!")
+
+# Вставляем новый безопасный плеер вместо старого st.video
+import streamlit.components.v1 as components
+components.html("""
+    <video width="100%" height="auto" controls autoplay muted playsinline>
+        <source src="video.mp4" type="video/mp4">
+    </video>
+""", height=400)
         
         # Подключаем стабильный прямой поток резервного ИИ-медиа
         # Этот ролик гарантированно отобразится в любом браузере и на смартфонах
