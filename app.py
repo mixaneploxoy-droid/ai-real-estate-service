@@ -1,55 +1,78 @@
 import streamlit as st
+import requests
 import time
 
-# Настройка стиля страницы
 st.set_page_config(page_title="ИИ Генератор Видео", page_icon="🎬", layout="centered")
 
-st.title("🎬 Мой Профессиональный ИИ-Создатель Видео")
-st.write("Превращайте ваши текстовые идеи и сценарии в высококачественные видеоролики за пару минут.")
+st.title("🎬 Профессиональный ИИ-Создатель Видео")
+st.write("Превращайте ваши текстовые сценарии в реальные видеоролики с помощью передовых облачных моделей.")
 
-st.subheader("📝 Настройки генерации:")
+# Считываем токен безопасности из настроек Secrets
+try:
+    HF_TOKEN = st.secrets["HF_TOKEN"]
+except Exception:
+    HF_TOKEN = None
 
-# Поле для ввода текстового описания (Промпта)
+# СОВРЕМЕННАЯ И БЫСТРАЯ ТЕКСТОВАЯ ВИДЕО-МОДЕЛЬ (Всегда активна на серверах)
+API_URL = "https://huggingface.co"
+headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+
+st.subheader("📝 Настройки вашего ролика:")
 prompt = st.text_area(
-    "Опишите, что должно происходить в видео:", 
-    placeholder="Например: Футуристичный робот идет по неоновому городу будущего, стиль киберпанк, кинематографичное освещение, 4k...",
+    "Опишите сюжет для видео (строго НА АНГЛИЙСКОМ языке):", 
+    placeholder="Например: Astronaut riding a horse on mars, photorealistic, 4k, HD...",
     height=100
 )
 
-# Дополнительные настройки для коммерческого сайта
-col1, col2 = st.columns(2)
-with col1:
-    duration = st.selectbox("Длительность видео:", ["5 секунд (Базовое)", "10 секунд (Премиум)", "30 секунд (VIP)"])
-with col2:
-    aspect_ratio = st.selectbox("Формат (Соотношение сторон):", ["16:9 (Для YouTube)", "9:16 (Для Shorts / Reels / TikTok)", "1:1 (Квадрат)"])
-
-style = st.select_slider(
-    "Выберите стиль визуализации:",
-    options=["Фотореализм", "3D Анимация", "Аниме / Манга", "Фэнтези арт", "Кинематографичный"]
-)
-
+style = st.selectbox("Стиль видео:", ["Фотореализм", "Кинематографичный", "Аниме", "3D Рендер"])
 st.write("---")
 
-# Кнопка запуска
 if st.button("🚀 Сгенерировать ИИ-Видео"):
-    if not prompt:
-        st.warning("⚠️ Пожалуйста, введите текстовое описание (промпт) для создания видео!")
+    if not HF_TOKEN:
+        st.error("⚠️ Ошибка: Вы забыли добавить 'HF_TOKEN' в настройки Secrets вашего приложения!")
+    elif not prompt:
+        st.warning("⚠️ Пожалуйста, введите текстовое описание сюжета.")
     else:
-        st.info("⏳ Запрос отправлен на ИИ-сервер. Пожалуйста, подождите, идет магия генерации...")
+        st.info("⏳ Запрос отправлен в ИИ-облако. Идет создание видеоролика, пожалуйста, подождите...")
         
-        # Визуальная полоса загрузки для клиента
+        # Красивая анимация загрузки
         progress_bar = st.progress(0)
         status_text = st.empty()
         
-        for percent_complete in range(100):
-            time.sleep(0.05) # Симуляция ожидания ответа от API
-            progress_bar.progress(percent_complete + 1)
-            status_text.text(f"Рендеринг кадров: {percent_complete + 1}%")
+        # Склеиваем описание и выбранный стиль
+        full_prompt = f"{prompt}, {style} style, high quality, detailed, cinematic lighting"
+        
+        # Отправляем запрос в ИИ-облако
+        try:
+            # Увеличиваем таймаут ожидания до 150 секунд, чтобы сайт не обрывал связь
+            response = requests.post(API_URL, headers=headers, json={"inputs": full_prompt}, timeout=150)
             
-        st.success("🎯 Видео успешно сгенерировано нейросетью!")
-        
-        # Демонстрационный ролик (заглушка), пока мы не подключили реальное API
-        # Streamlit умеет воспроизводить любые видео по ссылке или из файла
-        st.video("https://w3schools.com")
-        
-        st.caption("Вы можете скачать готовый ролик, нажав на три точки в правом нижнем углу видеоплеера.")
+            # Если модель только просыпается, плавно ждем её в цикле
+            attempts = 0
+            while response.status_code == 503 and attempts < 3:
+                status_text.warning("⏳ Сервер ИИ просыпается и загружает модель в память. Ждем 20 секунд...")
+                time.sleep(20)
+                response = requests.post(API_URL, headers=headers, json={"inputs": full_prompt}, timeout=150)
+                attempts += 1
+            
+            # Имитируем заполнение полосы прогресса до конца
+            for i in range(100):
+                time.sleep(0.01)
+                progress_bar.progress(i + 1)
+                status_text.text(f"Рендеринг кадров: {i + 1}%")
+                
+            if response.status_code == 200:
+                st.success("🎯 Видео успешно сгенерировано нейросетью!")
+                
+                # Получаем бинарные файлы видеоролика напрямую от ИИ
+                video_bytes = response.content
+                
+                # Выводим настоящее видео в плеер браузера
+                st.video(video_bytes)
+                st.caption("Вы можете скачать готовый ролик, нажав на три точки в правом нижнем углу видеоплеера.")
+            else:
+                st.error(f"❌ Ошибка ИИ-сервера (Код {response.status_code}).")
+                st.caption(f"Ответ сервера: {response.text}")
+                
+        except Exception as e:
+            st.error(f"💥 Произошла критическая ошибка: {e}")
