@@ -31,9 +31,9 @@ if st.button("🚀 Сгенерировать ИИ-Видео"):
             progress_bar.progress(i + 1)
             status_text.text(f"Сборка кадров нейросетью: {i + 1}%")
             
+        # Этот блок теперь срабатывает строго ПОСЛЕ того, как шкала дошла до 100%
         st.success("Видео успешно сгенерировано высокоскоростным ИИ-узлом!")
-
-st.success("Видео успешно сгенерировано высокоскоростным ИИ-узлом!")
-
-video_url = "video.mp4"
-st.video(video_url, muted=True, autoplay=True)
+        
+        # Запуск видеофайла, сохраненного в вашем репозитории
+        video_url = "video.mp4"
+        st.video(video_url, muted=True, autoplay=True)
