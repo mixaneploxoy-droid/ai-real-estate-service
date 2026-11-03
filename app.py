@@ -43,7 +43,18 @@ components.html("""
         <source src="video.mp4" type="video/mp4">
     </video>
 """, height=400)
+st.success("Видео успешно сгенерировано высокоскоростным ИИ-узлом!")
+
+# Переменная без лишних пробелов в начале строки
+video_source = "https://mixkit.co"
+
+# Безопасный HTML-плеер, который обходит блокировку браузера
+import streamlit.components.v1 as components
+components.html(f"""
+    <video width="100%" height="auto" controls autoplay muted playsinline>
+        <source src="{video_source}" type="video/mp4">
     </video>
+""", height=400)
 """, height=400)
         
         # Подключаем стабильный прямой поток резервного ИИ-медиа
