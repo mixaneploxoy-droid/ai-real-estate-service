@@ -37,5 +37,5 @@ if st.button("🚀 Сгенерировать ИИ-Видео"):
         # Этот ролик гарантированно отобразится в любом браузере и на смартфонах
         video_source = "https://mixkit.co"
         
-        st.video(video_source)
+        st.video(video_path) # или st.video(video_url)
         st.caption("✨ Вы можете сохранить готовый ролик, нажав на три точки в правом нижнем углу видеоплеера.")
