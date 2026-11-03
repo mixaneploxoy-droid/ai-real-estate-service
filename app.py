@@ -31,9 +31,13 @@ if st.button("🚀 Сгенерировать ИИ-Видео"):
             progress_bar.progress(i + 1)
             status_text.text(f"Сборка кадров нейросетью: {i + 1}%")
             
-        # Этот блок теперь срабатывает строго ПОСЛЕ того, как шкала дошла до 100%
+        # Этот блок срабатывает строго ПОСЛЕ того, как шкала дошла до 100%
         st.success("Видео успешно сгенерировано высокоскоростным ИИ-узлом!")
         
-        # Запуск видеофайла, сохраненного в вашем репозитории
-        video_url = "video.mp4"
-        st.video(video_url, muted=True, autoplay=True)
+        # Надежное чтение локального файла video.mp4 из репозитория
+        try:
+            with open("video.mp4", "rb") as video_file:
+                video_bytes = video_file.read()
+            st.video(video_bytes, format="video/mp4", muted=True, autoplay=True)
+        except FileNotFoundError:
+            st.error("⚠️ Файл 'video.mp4' не найден на сервере. Пожалуйста, убедитесь, что вы загрузили его в корень репозитория GitHub рядом с app.py!")
